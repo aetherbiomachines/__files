@@ -1,0 +1,25 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+pylint = "*"
+pylint-django = "*"
+ipdb = "*"
+mypy = "*"
+hypothesis = "*"
+invoke = "*"
+pre-commit = "*"
+django-stubs = "*"
+typing-extensions = "*"
+
+[packages]
+django = "*"
+graphene-django = "*"
+psycopg2 = "*"
+
+[requires]
+python_version = "3"
+
+[scripts]
