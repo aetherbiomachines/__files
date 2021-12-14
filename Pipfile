@@ -3,6 +3,11 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
+[[source]]
+name = "aether"
+url = "http://pypi.aetherbio.com/simple"
+verify_ssl = false
+
 [dev-packages]
 pylint = "*"
 pylint-django = "*"
@@ -15,9 +20,11 @@ django-stubs = "*"
 typing-extensions = "*"
 
 [packages]
-django = "*"
+django = "==3.2.9"
 graphene-django = "*"
 psycopg2 = "*"
+aether-federation = {version="*", index="aether"}
+aether-models = {version="*", index="aether"}
 
 [requires]
 python_version = "3"
