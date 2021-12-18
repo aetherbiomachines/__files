@@ -1,0 +1,56 @@
+pipelines:
+  branches:
+    ecs:
+      - step:
+          name: Build and Push image(s) to ECR
+          services:
+            - docker
+          caches:
+            - docker
+          script:
+            - DATE=$(date -u +%Y%m%d)          
+
+            - docker build -f devops/Dockerfile.dev -t graphql/files .
+#            - docker build -f nginx/Dockerfile -t graphql/nginx .            
+
+            - pipe: atlassian/aws-ecr-push-image:1.5.0
+              variables:
+                   IMAGE_NAME: graphql/files
+                   AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                   AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                   AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                   TAGS: '${BITBUCKET_BRANCH}-${DATE} ${BITBUCKET_COMMIT::7} latest'
+
+#            - pipe: atlassian/aws-ecr-push-image:1.5.0
+#              variables:
+#                   IMAGE_NAME: graphql/nginx
+#                   AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+#                   AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+#                   AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+#                   TAGS: '${BITBUCKET_BRANCH}-${DATE} ${BITBUCKET_COMMIT::7} latest'
+            
+  custom:
+    PROD-DEPLOY:
+      - step:
+          script:
+            - pipe: atlassian/aws-ecs-deploy:1.6.1
+              variables:
+                   CLUSTER_NAME: "${SERVICE}QL"
+                   SERVICE_NAME: "${SERVICE}-Service"
+                   FORCE_NEW_DEPLOYMENT: 'true'
+    DEV-DEPLOY:
+      - step:
+          script:
+            - pipe: atlassian/aws-ecs-deploy:1.6.1
+              variables:
+                   CLUSTER_NAME: "${SERVICE}QL"
+                   SERVICE_NAME: "${SERVICE}-Service"
+                   FORCE_NEW_DEPLOYMENT: 'true'
+    STAGING-DEPLOY:
+      - step:
+          script:
+            - pipe: atlassian/aws-ecs-deploy:1.6.1
+              variables:
+                   CLUSTER_NAME: "${SERVICE}QL"
+                   SERVICE_NAME: "${SERVICE}-Service"
+                   FORCE_NEW_DEPLOYMENT: 'true'

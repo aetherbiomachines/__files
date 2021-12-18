@@ -1,0 +1,34 @@
+# File structure version
+version: '3'
+
+services:
+  # Our django application
+  # Build from remote dockerfile
+  # Connect local app folder with image folder, so changes will be pushed to image instantly
+  # Open port 8000
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+#    volumes:
+#      - ./ecs-sample:/ecs-sample
+    command: gunicorn analytics.wsgi:application --bind 0.0.0.0:8000
+#    env_file:
+#      - ./.env.prod
+#    expose:
+#      - "8000"
+    ports:
+    - '8080:80' #
+    environment:
+      - SECRET_KEY
+      - ENV=prod
+      - DJANGO_SETTINGS_MODULE=settings.local
+  
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx/Dockerfile
+#    ports:
+#      - 80:80
+    depends_on:
+      - web
