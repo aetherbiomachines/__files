@@ -1,6 +1,6 @@
 pipelines:
   branches:
-    ecs:
+    master:
       - step:
           name: Build and Push image(s) to ECR
           services:
