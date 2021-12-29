@@ -1,9 +1,7 @@
-from .entry import Query as EntryQuery
-from .experiment import Query as ExperimentQuery
+from .managed_file import Query as ManagedFileQuery
 
 
 class Query(
-    EntryQuery,
-    ExperimentQuery,
+    ManagedFileQuery,
 ):
     pass
