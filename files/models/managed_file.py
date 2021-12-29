@@ -21,7 +21,6 @@ class MIMEType(models.TextChoices):
 
     BIN = 'application/octet-stream'
     CSV = 'text/csv'
-    DEFAULT = 'application/octet-stream'
     GIF = 'image/gif'
     JPEG = 'image/jpeg'
     PDF = 'application/pdf'
@@ -55,7 +54,7 @@ class ManagedFile(models.Model):
     s3_base_name = models.CharField(max_length=250)
     s3_revision = models.IntegerField(default=0)
 
-    mime_type = models.CharField(max_length=50, choices=MIMEType.choices)
+    mime_type = models.CharField(max_length=50, choices=MIMEType.choices, default=MIMEType.BIN)
     category = models.CharField(max_length=50, choices=Category.choices)
     context = models.CharField(max_length=50, choices=Context.choices)
 
