@@ -6,15 +6,16 @@ on:
       - "master"
 
 env:
+  SERVICE: Files
   AWS_REGION: us-east-1                   # set this to your preferred AWS region, e.g. us-west-1
-  ECR_REPOSITORY: dashboards/progress           # set this to your Amazon ECR repository name
-  ECS_SERVICE: Progress-Service                 # set this to your Amazon ECS service name
-  ECS_CLUSTER: DASHBOARDS                 # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: devops/progress-service-TD.json # set this to the path to your Amazon ECS task definition
-                                          # file, e.g. .aws/task-definition.json
-  CONTAINER_NAME: progress-pyviz
-# set this to the name of the container in the
-# containerDefinitions section of your task definition
+  ECR_REPOSITORY: graphql/$SERVICE           # set this to your Amazon ECR repository name
+  ECS_SERVICE: $SERVICE-Service                 # set this to your Amazon ECS service name
+  ECS_CLUSTER: ${{ env.SERVICE }}QL             # set this to your Amazon ECS cluster name
+  ECS_TASK_DEFINITION: devops/${{ env.SERVICE }}-service-TD.json  # set this to the path to your Amazon ECS task definition
+                                                                  # file, e.g. .aws/task-definition.json
+  CONTAINER_NAME_WEB: ${{ env.SERVICE }}_django
+  CONTAINER_NAME_PROXY: ${{ env.SERVICE }}_nginx
+
 
 permissions:
   contents: read
@@ -49,13 +50,22 @@ jobs:
         docker build -f devops/Dockerfile.prod -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+    
     - name: Fill in the new image ID in the Amazon ECS task definition
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: ${{ env.ECS_TASK_DEFINITION }}
-        container-name: ${{ env.CONTAINER_NAME }}
+        container-name: ${{ env.CONTAINER_NAME_WEB }}
         image: ${{ steps.build-image.outputs.image }}
+
+    - name: Modify Amazon ECS task definition with second container
+      id: render-app-container
+      uses: aws-actions/amazon-ecs-render-task-definition@v1
+      with:
+        task-definition: ${{ steps.task-def.outputs.task-definition }}
+        container-name: ${{ env.CONTAINER_NAME_PROXY }}
+        image: 015042944066.dkr.ecr.us-east-1.amazonaws.com/graphql/nginx:latest
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
