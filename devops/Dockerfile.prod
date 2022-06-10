@@ -20,7 +20,7 @@ RUN pip install --upgrade pip
 COPY Pipfile /opt/app/
 COPY Pipfile.lock /opt/app/
 COPY devops/entrypoint.sh /opt/app/
-#RUN chmod +x /opt/app/entrypoint.sh
+RUN chmod +x /opt/app/entrypoint.sh
 CMD ["/bin/bash","-c","chmod +x /opt/app/entrypoint.sh && /opt/app/entrypoint.sh"]
 RUN pipenv install --deploy --system
 
