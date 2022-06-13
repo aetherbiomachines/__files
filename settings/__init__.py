@@ -1,7 +1,7 @@
 import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SECRET_KEY = '+l%q$s^qfq86n5x$4&vos92)hgxxpvt(c8jyr5u!zey#byfc^u'
+SECRET_KEY = '${{ secrets.DJANGO_SECRET }}'
 ALLOWED_HOSTS = ['*']
 
 
