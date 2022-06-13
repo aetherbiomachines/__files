@@ -1,6 +1,6 @@
 from settings import *
 
-DEBUG = True
+DEBUG = False
 TEMPLATES[0]['OPTIONS']['debug'] = DEBUG
 
 DATABASES = {
