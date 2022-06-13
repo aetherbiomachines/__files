@@ -8,8 +8,8 @@ DATABASES = {
         'ENGINE':'django.db.backends.postgresql_psycopg2',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'postgres',
-        'HOST': 'lims-stg-db1.cvsjiwtmbmak.us-east-1.rds.amazonaws.com',
+        'PASSWORD': '${{ secrets.PRODPW }}',
+        'HOST': '${{ secrets.PRODDB }}',
         'PORT': '5432',
     }
 }
